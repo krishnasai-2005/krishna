@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NexGen - Student Database</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body.admin-body { background-color: #f0fdf4; display: flex; height: 100vh; overflow: hidden; }
+        .admin-sidebar { width: 260px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px; }
+        .admin-logo { font-size: 1.5rem; font-weight: 800; color: #00796b; display: flex; align-items: center; gap: 10px; margin-bottom: 40px; padding-left: 10px; }
+        .admin-menu { list-style: none; }
+        .admin-menu li { padding: 12px 15px; margin-bottom: 5px; color: #64748b; cursor: pointer; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 12px; transition: 0.2s; }
+        .admin-menu li:hover, .admin-menu li.active { background: #e0f2f1; color: #00796b; }
+        
+        .admin-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .admin-title { font-size: 1.8rem; color: #1f2937; font-weight: bold; }
+
+        /* Table Styles */
+        .data-table-container { background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { background: #f9fafb; padding: 15px; text-align: left; font-size: 0.85rem; color: #6b7280; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
+        .data-table td { padding: 15px; border-bottom: 1px solid #e2e8f0; color: #374151; font-size: 0.95rem; }
+        
+        /* Interactive Name Link */
+        .student-link { color: #00796b; font-weight: bold; cursor: pointer; text-decoration: none; transition: 0.2s; }
+        .student-link:hover { text-decoration: underline; color: #004d40; }
+
+        .btn-delete { color: #ef4444; background: #fee2e2; padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
+        .btn-delete:hover { background: #fecaca; }
+        
+        .score-badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85rem; }
+        .score-good { background: #dcfce7; color: #16a34a; } /* Green */
+        .score-avg { background: #fef9c3; color: #ca8a04; } /* Yellow */
+        .score-bad { background: #fee2e2; color: #ef4444; } /* Red */
+    </style>
+</head>
+<body class="admin-body">
+
+    <aside class="admin-sidebar">
+        <div class="admin-logo"><i class="fas fa-shield-alt"></i> Admin Panel</div>
+        <ul class="admin-menu">
+            <li onclick="window.location.href='admin_panel.html'"><i class="fas fa-chart-line"></i> Dashboard</li>
+            <li class="active" onclick="window.location.href='admin_students.html'"><i class="fas fa-users"></i> Student Database</li>
+            <li onclick="window.location.href='admin_questions.html'"><i class="fas fa-file-alt"></i> Question Papers</li>
+            <li onclick="logoutAdmin()" style="margin-top: auto; color: #ef4444;"><i class="fas fa-sign-out-alt"></i> Logout</li>
+        </ul>
+    </aside>
+
+    <main class="admin-content">
+        <div class="admin-header">
+            <h1 class="admin-title">Student Database</h1>
+            <div style="font-weight: bold; color: #00796b;">Administrator</div>
+        </div>
+
+        <div class="data-table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Username (Click for Details)</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>Overall %</th> <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="student-table-body">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="js/db.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', loadStudentTable);
+
+        function loadStudentTable() {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const tbody = document.getElementById('student-table-body');
+            tbody.innerHTML = '';
+
+            if(users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">No registered students found.</td></tr>';
+                return;
+            }
+
+            users.forEach((user, index) => {
+                // Calculate Overall Percentage
+                let avgScore = 0;
+                let badgeClass = '';
+                
+                if(user.history && user.history.length > 0) {
+                    let totalScore = user.history.reduce((sum, item) => sum + parseInt(item.score), 0);
+                    // Assuming each exam is out of 100
+                    let maxScore = user.history.length * 100;
+                    avgScore = Math.round((totalScore / maxScore) * 100);
+                } else {
+                    avgScore = 0;
+                }
+
+                // Determine Badge Color
+                if(avgScore >= 75) badgeClass = 'score-good';
+                else if(avgScore >= 40) badgeClass = 'score-avg';
+                else badgeClass = 'score-bad';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>
+                            <span class="student-link" onclick="viewStudentDetails('${user.username}')">
+                                ${user.username} <i class="fas fa-external-link-alt" style="font-size:0.7rem; margin-left:5px;"></i>
+                            </span>
+                        </td>
+                        <td>${user.email}</td>
+                        <td>${user.mobile}</td>
+                        <td><span class="score-badge ${badgeClass}">${avgScore}%</span></td>
+                        <td>
+                            <button class="btn-delete" onclick="deleteUser('${user.username}')">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Redirect to new page with selected student
+        function viewStudentDetails(username) {
+            localStorage.setItem('adminSelectedStudent', username);
+            window.location.href = 'admin_student_details.html';
+        }
+
+        function deleteUser(username) {
+            if(confirm(`Are you sure you want to delete user: ${username}?`)) {
+                let users = JSON.parse(localStorage.getItem('users'));
+                users = users.filter(u => u.username !== username);
+                localStorage.setItem('users', JSON.stringify(users));
+                loadStudentTable();
+            }
+        }
+        function logoutAdmin() { if(confirm("Logout?")) window.location.href = 'index.html'; }
+    </script>
+</body>
+</html>

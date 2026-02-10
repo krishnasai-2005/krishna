@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NexGen - Subjects</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Specific Styles for Subjects Page */
+        .page-container { padding: 80px 50px; text-align: center; }
+        .page-title { color: #00796b; font-size: 2.5rem; margin-bottom: 10px; font-weight: 800; }
+        .page-subtitle { color: #666; font-size: 1.1rem; margin-bottom: 50px; }
+        
+        /* Section Divider */
+        .section-header { 
+            text-align: left; max-width: 1000px; margin: 40px auto 20px; 
+            border-left: 5px solid #00796b; padding-left: 15px; 
+        }
+        .section-header h2 { color: #333; font-size: 1.8rem; }
+
+        /* Grid Layout */
+        .subject-grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+            gap: 25px; max-width: 1000px; margin: 0 auto 50px; 
+        }
+        
+        /* Subject Card */
+        .subject-card { 
+            background: white; padding: 25px; border-radius: 12px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.3s; 
+            border: 1px solid #e2e8f0; text-align: center;
+        }
+        .subject-card:hover { 
+            transform: translateY(-7px); border-color: #00796b; 
+            box-shadow: 0 15px 30px rgba(0, 121, 107, 0.15); 
+        }
+        
+        /* Icons */
+        .icon-box { 
+            width: 60px; height: 60px; border-radius: 50%; background: #e0f2f1; 
+            color: #00796b; display: flex; align-items: center; justify-content: center; 
+            font-size: 1.8rem; margin: 0 auto 15px; 
+        }
+        .subject-name { font-size: 1.1rem; font-weight: bold; color: #333; margin-bottom: 5px; }
+        .subject-type { font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body style="background: #f8fafc;">
+
+    <nav class="tp-navbar">
+        <div class="tp-logo"><i class="fas fa-layer-group"></i> NexGen</div>
+        <div class="tp-nav-links">
+            <a href="index.html">Home</a>
+            <a href="subjects.html" class="active">Subjects</a>
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact Us</a>
+        </div>
+        <div class="tp-auth-buttons">
+            <button class="btn-tp-outline" onclick="window.location.href='index.html'">Login</button>
+        </div>
+    </nav>
+
+    <div class="page-container fade-in-up">
+        <h1 class="page-title">Curriculum & Subjects</h1>
+        <p class="page-subtitle">Comprehensive assessment modules for Practical and Theory.</p>
+
+        <div class="section-header">
+            <h2><i class="fas fa-laptop-code"></i> Practical Labs</h2>
+        </div>
+        <div class="subject-grid">
+            <div class="subject-card">
+                <div class="icon-box"><i class="fab fa-database"></i></div>
+                <div class="subject-name">Dbms</div>
+                <div class="subject-type">Practical</div>
+            </div>
+            <div class="subject-card">
+                <div class="icon-box"><i class="fab fa-java"></i></div>
+                <div class="subject-name">Core Java</div>
+                <div class="subject-type">Practical</div>
+            </div>
+            <div class="subject-card">
+                <div class="icon-box"><i class="fas fa-code"></i></div>
+                <div class="subject-name">C Programming</div>
+                <div class="subject-type">Practical</div>
+            </div>
+            <div class="subject-card">
+                <div class="icon-box"><i class="fas fa-file-code"></i></div>
+                <div class="subject-name">C++ Development</div>
+                <div class="subject-type">Practical</div>
+            </div>
+            <div class="subject-card">
+                <div class="icon-box"><i class="fas fa-globe"></i></div>
+                <div class="subject-name">Web Technologies</div>
+                <div class="subject-type">Practical</div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2><i class="fas fa-book-reader"></i> Theory Subjects</h2>
+        </div>
+        <div class="subject-grid">
+            <div class="subject-card">
+                <div class="icon-box"><i class="fas fa-brain"></i></div>
+                <div class="subject-name">Artificial Intelligence</div>
+                <div class="subject-type">Theory</div>
+            </div>
+            <div class="subject-card">
+                <div class="icon-box"><i class="fas fa-microchip"></i></div>
+                <div class="subject-name">Computer Architecture</div>
+                <div class="subject-type">Theory</div>
+            </div>
+            <div class="subject-card">
+                <div class="icon-box"><i class="fas fa-cloud"></i></div>
+                <div class="subject-name">Cloud Computing</div>
+                <div class="subject-type">Theory</div>
+            </div>
+            <div class="subject-card">
+                <div class="icon-box"><i class="fas fa-desktop"></i></div>
+                <div class="subject-name">Operating System</div>
+                <div class="subject-type">Theory</div>
+            </div>
+            <div class="subject-card">
+                <div class="icon-box"><i class="fas fa-network-wired"></i></div>
+                <div class="subject-name">Computer Networks</div>
+                <div class="subject-type">Theory</div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

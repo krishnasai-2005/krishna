@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NexGen - Edit Questions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body.admin-body { background-color: #f0fdf4; display: flex; height: 100vh; overflow: hidden; }
+        .admin-sidebar { width: 260px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px; }
+        .admin-content { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; }
+        
+        .editor-container { display: flex; gap: 30px; height: 100%; }
+        
+        .add-form-panel { flex: 1; background: white; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; overflow-y: auto; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; color: #374151; font-size: 0.9rem; }
+        .form-input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; }
+        .form-input:focus { border-color: #00796b; box-shadow: 0 0 0 3px rgba(0, 121, 107, 0.1); }
+        .btn-add { width: 100%; background: #00796b; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-add:hover { background: #004d40; }
+
+        /* Time Setting Box */
+        .time-setting-box {
+            background: #e0f2f1; padding: 15px; border-radius: 8px; margin-bottom: 20px;
+            border: 1px solid #b2dfdb; display: flex; align-items: center; justify-content: space-between;
+        }
+        .btn-save-time { background: #00796b; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
+        .question-list-panel { flex: 1.5; background: white; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; overflow-y: auto; }
+        .q-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 15px; position: relative; }
+        .q-text { font-weight: bold; color: #1e293b; margin-bottom: 10px; padding-right: 30px; }
+        .opt-list { list-style: none; padding-left: 0; font-size: 0.9rem; color: #64748b; }
+        .opt-list li { margin-bottom: 3px; }
+        .correct-ans { color: #16a34a; font-weight: bold; }
+        .btn-del-q { position: absolute; top: 10px; right: 10px; color: #ef4444; cursor: pointer; background: white; border: 1px solid #ef4444; padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; }
+        .btn-del-q:hover { background: #fee2e2; }
+        
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .btn-back { background: white; border: 1px solid #ccc; padding: 8px 15px; border-radius: 6px; cursor: pointer; color: #555; font-weight: bold; text-decoration: none; display: inline-block; }
+    </style>
+</head>
+<body class="admin-body">
+
+    <aside class="admin-sidebar">
+        <div style="font-size: 1.5rem; font-weight: 800; color: #00796b; margin-bottom: 30px;">
+            <i class="fas fa-shield-alt"></i> Admin Panel
+        </div>
+        <a href="admin_questions.html" class="btn-back"><i class="fas fa-arrow-left"></i> Back to Subjects</a>
+    </aside>
+
+    <main class="admin-content">
+        <div class="header-row">
+            <h1 style="margin: 0; color: #1e293b;">Editing: <span id="subject-title" style="color: #00796b;">...</span></h1>
+        </div>
+
+        <div class="editor-container">
+            
+            <div class="add-form-panel">
+                <div class="time-setting-box">
+                    <div>
+                        <label style="font-weight:bold; color:#00796b;">Exam Duration (Minutes):</label>
+                        <input type="number" id="exam-time" style="width: 60px; padding: 5px; border-radius: 4px; border: 1px solid #ccc;" min="1" value="10">
+                    </div>
+                    <button class="btn-save-time" onclick="saveTime()">Update Time</button>
+                </div>
+
+                <h3 style="margin-bottom: 20px; color: #00796b;"><i class="fas fa-plus-circle"></i> Add New Question</h3>
+                <form onsubmit="addQuestion(event)">
+                    <div class="form-group">
+                        <label>Question Text</label>
+                        <textarea id="q-input" class="form-input" rows="3" required placeholder="Type question here..."></textarea>
+                    </div>
+                    <div class="form-group"><label>Option 1</label><input type="text" id="opt-1" class="form-input" required></div>
+                    <div class="form-group"><label>Option 2</label><input type="text" id="opt-2" class="form-input" required></div>
+                    <div class="form-group"><label>Option 3</label><input type="text" id="opt-3" class="form-input" required></div>
+                    <div class="form-group"><label>Option 4</label><input type="text" id="opt-4" class="form-input" required></div>
+                    <div class="form-group">
+                        <label>Correct Answer</label>
+                        <select id="correct-opt" class="form-input">
+                            <option value="0">Option 1</option>
+                            <option value="1">Option 2</option>
+                            <option value="2">Option 3</option>
+                            <option value="3">Option 4</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-add">Add Question</button>
+                </form>
+            </div>
+
+            <div class="question-list-panel">
+                <h3 style="margin-bottom: 20px; color: #374151;">Existing Questions (<span id="q-count">0</span>)</h3>
+                <div id="questions-container">
+                    </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="js/questions.js"></script>
+    <script>
+        const subjectKey = localStorage.getItem('adminEditSubject');
+        const TITLES = {
+            'c_programming': 'C Programming', 'cpp_programming': 'C++ Programming',
+            'java_core': 'Core Java', 'dbms': 'DBMS', 'web_tech': 'Web Technology',
+            'os': 'Operating System', 'networks': 'Computer Networks',
+            'cloud': 'Cloud Computing', 'ai': 'Artificial Intelligence', 'arch': 'Computer Architecture'
+        };
+
+        function getQuestions() {
+            let allQuestions = JSON.parse(localStorage.getItem('dynamic_questions'));
+            if (!allQuestions) {
+                if (typeof QUESTION_BANK !== 'undefined') {
+                    allQuestions = QUESTION_BANK;
+                    localStorage.setItem('dynamic_questions', JSON.stringify(allQuestions));
+                } else { allQuestions = {}; }
+            }
+            return allQuestions;
+        }
+
+        // --- NEW: TIME FUNCTIONS ---
+        function loadTime() {
+            const timeSettings = JSON.parse(localStorage.getItem('exam_times')) || {};
+            const savedTime = timeSettings[subjectKey] || 10; // Default 10 mins
+            document.getElementById('exam-time').value = savedTime;
+        }
+
+        function saveTime() {
+            const newTime = document.getElementById('exam-time').value;
+            let timeSettings = JSON.parse(localStorage.getItem('exam_times')) || {};
+            timeSettings[subjectKey] = parseInt(newTime);
+            localStorage.setItem('exam_times', JSON.stringify(timeSettings));
+            alert(`Time updated to ${newTime} minutes for this subject.`);
+        }
+        // ---------------------------
+
+        function renderList() {
+            const allQ = getQuestions();
+            const subjectQ = allQ[subjectKey] || [];
+            
+            document.getElementById('subject-title').innerText = TITLES[subjectKey] || subjectKey;
+            document.getElementById('q-count').innerText = subjectQ.length;
+            
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+
+            if(subjectQ.length === 0) {
+                container.innerHTML = '<p style="color:#888; text-align:center;">No questions yet.</p>';
+                return;
+            }
+
+            subjectQ.forEach((q, idx) => {
+                const isCorrect = (i) => i === q.ans ? 'correct-ans' : '';
+                container.innerHTML += `
+                    <div class="q-item">
+                        <div class="q-text">Q${idx+1}: ${q.q}</div>
+                        <button class="btn-del-q" onclick="deleteQuestion(${idx})"><i class="fas fa-trash"></i> Delete</button>
+                        <ul class="opt-list">
+                            <li class="${isCorrect(0)}">A) ${q.options[0]}</li>
+                            <li class="${isCorrect(1)}">B) ${q.options[1]}</li>
+                            <li class="${isCorrect(2)}">C) ${q.options[2]}</li>
+                            <li class="${isCorrect(3)}">D) ${q.options[3]}</li>
+                        </ul>
+                    </div>
+                `;
+            });
+        }
+
+        function addQuestion(e) {
+            e.preventDefault();
+            const allQ = getQuestions();
+            const newQ = {
+                q: document.getElementById('q-input').value,
+                options: [ document.getElementById('opt-1').value, document.getElementById('opt-2').value, document.getElementById('opt-3').value, document.getElementById('opt-4').value ],
+                ans: parseInt(document.getElementById('correct-opt').value)
+            };
+            if(!allQ[subjectKey]) allQ[subjectKey] = [];
+            allQ[subjectKey].push(newQ);
+            localStorage.setItem('dynamic_questions', JSON.stringify(allQ));
+            e.target.reset(); renderList(); alert("Question Added!");
+        }
+
+        function deleteQuestion(idx) {
+            if(confirm("Delete this question?")) {
+                const allQ = getQuestions();
+                allQ[subjectKey].splice(idx, 1);
+                localStorage.setItem('dynamic_questions', JSON.stringify(allQ));
+                renderList();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderList();
+            loadTime(); // Load the saved time
+        });
+    </script>
+</body>
+</html>

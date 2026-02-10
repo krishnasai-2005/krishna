@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NexGen - Student Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body.admin-body { background-color: #f0fdf4; display: flex; height: 100vh; overflow: hidden; }
+        .admin-sidebar { width: 260px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px; }
+        .admin-logo { font-size: 1.5rem; font-weight: 800; color: #00796b; display: flex; align-items: center; gap: 10px; margin-bottom: 40px; padding-left: 10px; }
+        .admin-menu { list-style: none; }
+        .admin-menu li { padding: 12px 15px; margin-bottom: 5px; color: #64748b; cursor: pointer; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 12px; transition: 0.2s; }
+        .admin-menu li:hover, .admin-menu li.active { background: #e0f2f1; color: #00796b; }
+        
+        .admin-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .btn-back { background: white; border: 1px solid #ccc; padding: 8px 15px; border-radius: 6px; cursor: pointer; color: #555; font-weight: bold; }
+        
+        /* Profile Card */
+        .profile-summary {
+            background: white; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0;
+            display: flex; gap: 30px; align-items: center; margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: #e0f2f1; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: #00796b; }
+        .profile-info h2 { margin-bottom: 5px; color: #1f2937; }
+        .profile-info p { color: #64748b; margin-bottom: 5px; font-size: 0.95rem; }
+
+        /* Exam Table */
+        .table-container { background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { background: #f9fafb; padding: 15px; text-align: left; color: #6b7280; border-bottom: 1px solid #e2e8f0; text-transform: uppercase; font-size: 0.85rem; }
+        .data-table td { padding: 15px; border-bottom: 1px solid #e2e8f0; color: #374151; }
+        
+        .status-pass { color: #16a34a; font-weight: bold; background: #dcfce7; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; }
+        .status-fail { color: #ef4444; font-weight: bold; background: #fee2e2; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; }
+    </style>
+</head>
+<body class="admin-body">
+
+    <aside class="admin-sidebar">
+        <div class="admin-logo"><i class="fas fa-shield-alt"></i> Admin Panel</div>
+        <ul class="admin-menu">
+            <li onclick="window.location.href='admin_panel.html'"><i class="fas fa-chart-line"></i> Dashboard</li>
+            <li class="active" onclick="window.location.href='admin_students.html'"><i class="fas fa-users"></i> Student Database</li>
+            <li onclick="window.location.href='admin_questions.html'"><i class="fas fa-file-alt"></i> Question Papers</li>
+            <li onclick="logoutAdmin()" style="margin-top: auto; color: #ef4444;"><i class="fas fa-sign-out-alt"></i> Logout</li>
+        </ul>
+    </aside>
+
+    <main class="admin-content">
+        <div class="admin-header">
+            <button class="btn-back" onclick="window.location.href='admin_students.html'"><i class="fas fa-arrow-left"></i> Back to List</button>
+            <div style="font-weight: bold; color: #00796b;">Student Performance Report</div>
+        </div>
+
+        <div class="profile-summary" id="profile-card">
+            <div class="profile-avatar"><i class="fas fa-user"></i></div>
+            <div class="profile-info">
+                <h2 id="stu-name">Loading...</h2>
+                <p><i class="fas fa-envelope"></i> <span id="stu-email">--</span></p>
+                <p><i class="fas fa-phone"></i> <span id="stu-mobile">--</span></p>
+            </div>
+        </div>
+
+        <h3 style="margin-bottom: 15px; color: #374151;">Exam History</h3>
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Date Taken</th>
+                        <th>Score</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="history-body">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="js/db.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get selected username from localStorage
+            const selectedUsername = localStorage.getItem('adminSelectedStudent');
+            const allUsers = JSON.parse(localStorage.getItem('users')) || [];
+            
+            // Find user object
+            const user = allUsers.find(u => u.username === selectedUsername);
+
+            if (!user) {
+                alert("Student data not found!");
+                window.location.href = 'admin_students.html';
+                return;
+            }
+
+            // Fill Profile
+            document.getElementById('stu-name').innerText = user.username;
+            document.getElementById('stu-email').innerText = user.email || 'N/A';
+            document.getElementById('stu-mobile').innerText = user.mobile || 'N/A';
+
+            // Fill Table
+            const tbody = document.getElementById('history-body');
+            tbody.innerHTML = '';
+
+            if (!user.history || user.history.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:#888;">This student has not taken any exams yet.</td></tr>';
+            } else {
+                user.history.forEach(exam => {
+                    const statusClass = exam.score >= 40 ? 'status-pass' : 'status-fail';
+                    const statusText = exam.score >= 40 ? 'PASS' : 'FAIL';
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="font-weight:bold; color:#333;">${exam.subject}</td>
+                            <td>${exam.date}</td>
+                            <td style="font-weight:bold;">${exam.score} / 100</td>
+                            <td><span class="${statusClass}">${statusText}</span></td>
+                        </tr>
+                    `;
+                });
+            }
+        });
+
+        function logoutAdmin() {
+            if(confirm("Logout?")) window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

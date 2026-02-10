@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NexGen - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Admin Specific Overrides */
+        body.admin-body { background-color: #f0fdf4; display: flex; height: 100vh; overflow: hidden; }
+        
+        .admin-sidebar { width: 260px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px; }
+        .admin-logo { font-size: 1.5rem; font-weight: 800; color: #00796b; display: flex; align-items: center; gap: 10px; margin-bottom: 40px; padding-left: 10px; }
+        .admin-menu { list-style: none; }
+        .admin-menu li { padding: 12px 15px; margin-bottom: 5px; color: #64748b; cursor: pointer; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 12px; transition: 0.2s; }
+        .admin-menu li:hover, .admin-menu li.active { background: #e0f2f1; color: #00796b; }
+        
+        .admin-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .admin-title { font-size: 1.8rem; color: #1f2937; font-weight: bold; }
+
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; }
+        .stat-card { background: white; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; align-items: center; justify-content: space-between; }
+        .stat-info h3 { font-size: 2.5rem; color: #00796b; margin-bottom: 5px; }
+        .stat-info p { color: #6b7280; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; }
+        .stat-icon { width: 60px; height: 60px; background: #e0f2f1; color: #00796b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
+    </style>
+</head>
+<body class="admin-body">
+
+    <aside class="admin-sidebar">
+        <div class="admin-logo"><i class="fas fa-shield-alt"></i> Admin Panel</div>
+        <ul class="admin-menu">
+            <li class="active" onclick="window.location.href='admin_panel.html'"><i class="fas fa-chart-line"></i> Dashboard</li>
+            <li onclick="window.location.href='admin_students.html'"><i class="fas fa-users"></i> Student Database</li>
+            <li onclick="window.location.href='admin_questions.html'"><i class="fas fa-file-alt"></i> Question Papers</li>
+            <li onclick="logoutAdmin()" style="margin-top: auto; color: #ef4444;"><i class="fas fa-sign-out-alt"></i> Logout</li>
+        </ul>
+    </aside>
+
+    <main class="admin-content">
+        <div class="admin-header">
+            <h1 class="admin-title">Dashboard Overview</h1>
+            <div style="font-weight: bold; color: #00796b;">Administrator</div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-info"><h3 id="total-students">0</h3><p>Total Students</p></div>
+                <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-info"><h3 id="total-exams">0</h3><p>Exams Taken</p></div>
+                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/db.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            document.getElementById('total-students').innerText = users.length;
+            
+            let totalExams = 0;
+            users.forEach(u => { if(u.history) totalExams += u.history.length; });
+            document.getElementById('total-exams').innerText = totalExams;
+        });
+
+        function logoutAdmin() {
+            if(confirm("Logout from Admin Panel?")) window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

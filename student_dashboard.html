@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NexGen - Student Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* --- DASHBOARD SPECIFIC STYLES --- */
+        body.dashboard-body { background-color: #f0fdf4; display: flex; height: 100vh; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+        
+        /* Sidebar */
+        .sidebar { width: 260px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 25px; box-shadow: 2px 0 10px rgba(0,0,0,0.02); }
+        .brand-logo { font-size: 1.6rem; font-weight: 800; color: #00796b; display: flex; align-items: center; gap: 12px; margin-bottom: 50px; }
+        .menu-list { list-style: none; padding: 0; }
+        .menu-list li { padding: 14px 18px; margin-bottom: 8px; color: #64748b; cursor: pointer; border-radius: 10px; font-weight: 600; display: flex; align-items: center; gap: 15px; transition: all 0.3s ease; }
+        .menu-list li:hover, .menu-list li.active { background: #e0f2f1; color: #00796b; transform: translateX(5px); }
+        
+        /* Main Area */
+        .main-content { flex: 1; display: flex; flex-direction: column; background: #f8fafc; }
+        .top-header { background: white; padding: 15px 40px; display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; align-items: center; height: 70px; }
+        .content-scroll { padding: 30px 40px; overflow-y: auto; height: calc(100vh - 70px); }
+
+        /* --- HERO SECTION --- */
+        .dashboard-hero {
+            display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 25px; margin-bottom: 40px;
+        }
+        .welcome-card { 
+            background: linear-gradient(120deg, #009688, #00796b); 
+            color: white; padding: 30px; border-radius: 20px; 
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 15px 30px rgba(0, 121, 107, 0.25); position: relative; overflow: hidden;
+        }
+        .welcome-text h1 { font-size: 1.8rem; margin-bottom: 8px; font-weight: 700; }
+        .welcome-text p { font-size: 0.95rem; opacity: 0.9; margin: 0; }
+        .welcome-icon { font-size: 5rem; opacity: 0.2; transform: rotate(-10deg); position: absolute; right: 20px; bottom: -10px; }
+
+        /* Stats */
+        .stat-card { 
+            background: white; padding: 25px; border-radius: 20px; border: 1px solid #eef2f6; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.03); display: flex; flex-direction: column; 
+            justify-content: center; align-items: flex-start; transition: transform 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-icon-circle {
+            width: 45px; height: 45px; border-radius: 12px; display: flex; 
+            align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 15px;
+        }
+        .stat-green { background: #dcfce7; color: #16a34a; }
+        .stat-blue { background: #dbeafe; color: #2563eb; }
+        .stat-value { font-size: 2rem; font-weight: 800; color: #1e293b; line-height: 1; margin-bottom: 5px; }
+        .stat-label { color: #64748b; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+
+        /* --- SUBJECT GRIDS --- */
+        .section-title { font-size: 1.1rem; font-weight: 800; color: #334155; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .section-title i { color: #00796b; }
+        
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; margin-bottom: 40px; }
+
+        .subject-card { 
+            background: white; border-radius: 16px; padding: 30px 20px; 
+            text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            border: 1px solid #f1f5f9; position: relative; overflow: hidden;
+        }
+        .subject-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0, 121, 107, 0.1); border-color: #b2dfdb; }
+        .subject-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: #e2e8f0; transition: 0.3s; }
+        .subject-card:hover::before { background: #00796b; }
+        
+        .card-icon { 
+            width: 65px; height: 65px; margin: 0 auto 20px; background: #f0fdfa; border-radius: 50%; color: #00796b; 
+            display: flex; align-items: center; justify-content: center; font-size: 2rem; transition: 0.3s;
+        }
+        .subject-card:hover .card-icon { background: #00796b; color: white; }
+        
+        .card-title { font-weight: 700; color: #334155; font-size: 1.05rem; margin-bottom: 5px; }
+        .card-sub { font-size: 0.8rem; color: #94a3b8; }
+
+        @media(max-width: 1000px) {
+            .dashboard-hero { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+
+    <aside class="sidebar">
+        <div class="brand-logo"><i class="fas fa-layer-group"></i> NexGen</div>
+        <ul class="menu-list">
+            <li class="active" onclick="window.location.href='student_dashboard.html'"><i class="fas fa-home"></i> Dashboard</li>
+            <li onclick="window.location.href='student_results.html'"><i class="fas fa-chart-pie"></i> My Results</li>
+            <li onclick="window.location.href='student_profile.html'"><i class="fas fa-user"></i> My Profile</li>
+            <li onclick="logout()" style="margin-top: 50px; color: #ef4444;"><i class="fas fa-sign-out-alt"></i> Logout</li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div style="font-weight: bold; color: #475569; font-size: 1.1rem;">Dashboard Overview</div>
+            <div class="user-profile-snippet" onclick="window.location.href='student_profile.html'" style="cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                <span id="nav-username" style="font-weight: 600; color: #334155;">Student</span>
+                <img id="nav-profile-pic" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            </div>
+        </header>
+
+        <div class="content-scroll">
+            
+            <div class="dashboard-hero">
+                <div class="welcome-card">
+                    <div class="welcome-text">
+                        <h1>Welcome back, <span id="welcome-user">Student</span>!</h1>
+                        <p>You have pending exams. Click a subject below to start.</p>
+                    </div>
+                    <i class="fas fa-graduation-cap welcome-icon"></i>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon-circle stat-green"><i class="fas fa-check"></i></div>
+                    <div class="stat-value" id="completed-count">0</div>
+                    <div class="stat-label">Exams Completed</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon-circle stat-blue"><i class="fas fa-clock"></i></div>
+                    <div class="stat-value">10</div>
+                    <div class="stat-label">Mins Per Exam</div>
+                </div>
+            </div>
+
+            <div class="section-title"><i class="fas fa-laptop-code"></i> Practical Assessments</div>
+            <div class="cards-grid">
+                <div class="subject-card" onclick="goToExam('c_programming')">
+                    <div class="card-icon"><i class="fas fa-code"></i></div>
+                    <div class="card-title">C Programming</div>
+                    <div class="card-sub">Practical Lab</div>
+                </div>
+                <div class="subject-card" onclick="goToExam('cpp_programming')">
+                    <div class="card-icon"><i class="fas fa-file-code"></i></div>
+                    <div class="card-title">C++ Programming</div>
+                    <div class="card-sub">Practical Lab</div>
+                </div>
+                <div class="subject-card" onclick="goToExam('java_core')">
+                    <div class="card-icon"><i class="fab fa-java"></i></div>
+                    <div class="card-title">Core Java</div>
+                    <div class="card-sub">Practical Lab</div>
+                </div>
+                  <div class="subject-card" onclick="goToExam('dbms')">
+                  <div class="card-icon"><i class="fas fa-database"></i></div>
+                   <div class="card-title">DBMS</div>
+                   <div class="card-sub">Practical Lab</div>
+                </div>
+                <div class="subject-card" onclick="goToExam('web_tech')">
+                    <div class="card-icon"><i class="fas fa-globe"></i></div>
+                    <div class="card-title">Web Technology</div>
+                    <div class="card-sub">Practical Lab</div>
+                </div>
+            </div>
+
+            <div class="section-title"><i class="fas fa-book-open"></i> Theory Assessments</div>
+            <div class="cards-grid">
+                <div class="subject-card" onclick="goToExam('os')">
+                    <div class="card-icon"><i class="fas fa-desktop"></i></div>
+                    <div class="card-title">Operating System</div>
+                    <div class="card-sub">Theory Exam</div>
+                </div>
+                <div class="subject-card" onclick="goToExam('networks')">
+                    <div class="card-icon"><i class="fas fa-network-wired"></i></div>
+                    <div class="card-title">Computer Networks</div>
+                    <div class="card-sub">Theory Exam</div>
+                </div>
+                <div class="subject-card" onclick="goToExam('cloud')">
+                    <div class="card-icon"><i class="fas fa-cloud"></i></div>
+                    <div class="card-title">Cloud Computing</div>
+                    <div class="card-sub">Theory Exam</div>
+                </div>
+                <div class="subject-card" onclick="goToExam('ai')">
+                    <div class="card-icon"><i class="fas fa-brain"></i></div>
+                    <div class="card-title">Artificial Intelligence</div>
+                    <div class="card-sub">Theory Exam</div>
+                </div>
+                <div class="subject-card" onclick="goToExam('arch')">
+                    <div class="card-icon"><i class="fas fa-microchip"></i></div>
+                    <div class="card-title">Computer Architecture</div>
+                    <div class="card-sub">Theory Exam</div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="js/db.js"></script>
+    <script src="js/student.js"></script>
+    <script>
+        // Redirect logic for Separate Exam Page
+        function goToExam(subjectKey) {
+            if(confirm("Start Exam? You will have 10 minutes to complete 10 questions.")) {
+                localStorage.setItem('currentExamSubject', subjectKey);
+                window.location.href = 'exam_page.html';
+            }
+        }
+
+        // Load Completed Exams Count
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if(user && user.history) {
+                document.getElementById('completed-count').innerText = user.history.length;
+            }
+        });
+    </script>
+</body>
+</html>

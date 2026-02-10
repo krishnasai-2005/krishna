@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NexGen - Manage Questions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body.admin-body { background-color: #f0fdf4; display: flex; height: 100vh; overflow: hidden; }
+        .admin-sidebar { width: 260px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px; }
+        .admin-logo { font-size: 1.5rem; font-weight: 800; color: #00796b; display: flex; align-items: center; gap: 10px; margin-bottom: 40px; padding-left: 10px; }
+        .admin-menu { list-style: none; }
+        .admin-menu li { padding: 12px 15px; margin-bottom: 5px; color: #64748b; cursor: pointer; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 12px; transition: 0.2s; }
+        .admin-menu li:hover, .admin-menu li.active { background: #e0f2f1; color: #00796b; }
+        .admin-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        
+        /* Grid Styles */
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .admin-subject-card {
+            background: white; border: 1px solid #e2e8f0; padding: 25px; border-radius: 12px; text-align: center;
+            cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            position: relative; overflow: hidden;
+        }
+        .admin-subject-card:hover { border-color: #00796b; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 121, 107, 0.1); }
+        .sub-icon { font-size: 2.5rem; color: #00796b; margin-bottom: 15px; }
+        .sub-name { font-weight: bold; color: #374151; font-size: 1.1rem; }
+        .edit-badge { position: absolute; top: 10px; right: 10px; background: #e0f2f1; color: #00796b; font-size: 0.7rem; padding: 3px 8px; border-radius: 10px; }
+    </style>
+</head>
+<body class="admin-body">
+
+    <aside class="admin-sidebar">
+        <div class="admin-logo"><i class="fas fa-shield-alt"></i> Admin Panel</div>
+        <ul class="admin-menu">
+            <li onclick="window.location.href='admin_panel.html'"><i class="fas fa-chart-line"></i> Dashboard</li>
+            <li onclick="window.location.href='admin_students.html'"><i class="fas fa-users"></i> Student Database</li>
+            <li class="active" onclick="window.location.href='admin_questions.html'"><i class="fas fa-file-alt"></i> Question Papers</li>
+            <li onclick="logoutAdmin()" style="margin-top: auto; color: #ef4444;"><i class="fas fa-sign-out-alt"></i> Logout</li>
+        </ul>
+    </aside>
+
+    <main class="admin-content">
+        <div class="admin-header">
+            <h1 class="admin-title">Manage Question Papers</h1>
+            <div style="font-weight: bold; color: #00796b;">Administrator</div>
+        </div>
+
+        <div class="admin-grid">
+            <div class="admin-subject-card" onclick="manageQuestions('c_programming')">
+                <span class="edit-badge">Edit</span><div class="sub-icon"><i class="fas fa-code"></i></div><div class="sub-name">C Programming</div>
+            </div>
+            <div class="admin-subject-card" onclick="manageQuestions('cpp_programming')">
+                <span class="edit-badge">Edit</span><div class="sub-icon"><i class="fas fa-file-code"></i></div><div class="sub-name">C++ Programming</div>
+            </div>
+            <div class="admin-subject-card" onclick="manageQuestions('java_core')">
+                <span class="edit-badge">Edit</span><div class="sub-icon"><i class="fab fa-java"></i></div><div class="sub-name">Core Java</div>
+            </div>
+
+            <div class="admin-subject-card" onclick="manageQuestions('dbms')">
+                <span class="edit-badge">Edit</span><div class="sub-icon"><i class="fas fa-database"></i></div><div class="sub-name">DBMS</div>
+            </div>
+
+            <div class="admin-subject-card" onclick="manageQuestions('web_tech')">
+                <span class="edit-badge">Edit</span><div class="sub-icon"><i class="fas fa-globe"></i></div><div class="sub-name">Web Technology</div>
+            </div>
+
+            <div class="admin-subject-card" onclick="manageQuestions('os')">
+                <span class="edit-badge">Edit</span><div class="sub-icon"><i class="fas fa-desktop"></i></div><div class="sub-name">Operating System</div>
+            </div>
+            <div class="admin-subject-card" onclick="manageQuestions('networks')">
+                <span class="edit-badge">Edit</span><div class="sub-icon"><i class="fas fa-network-wired"></i></div><div class="sub-name">Computer Networks</div>
+            </div>
+            <div class="admin-subject-card" onclick="manageQuestions('cloud')">
+                <span class="edit-badge">Edit</span><div class="sub-icon"><i class="fas fa-cloud"></i></div><div class="sub-name">Cloud Computing</div>
+            </div>
+            <div class="admin-subject-card" onclick="manageQuestions('ai')">
+                <span class="edit-badge">Edit</span><div class="sub-icon"><i class="fas fa-brain"></i></div><div class="sub-name">Artificial Intelligence</div>
+            </div>
+            <div class="admin-subject-card" onclick="manageQuestions('arch')">
+                <span class="edit-badge">Edit</span><div class="sub-icon"><i class="fas fa-microchip"></i></div><div class="sub-name">Computer Architecture</div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/db.js"></script>
+    <script>
+        function manageQuestions(subjectKey) {
+            localStorage.setItem('adminEditSubject', subjectKey);
+            window.location.href = 'admin_manage_questions.html';
+        }
+        function logoutAdmin() { if(confirm("Logout?")) window.location.href = 'index.html'; }
+    </script>
+</body>
+</html>

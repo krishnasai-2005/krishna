@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NexGen - Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <style>
+        .auth-container {
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; padding-top: 60px;
+        }
+    </style>
+</head>
+<body class="testportal-theme">
+
+    <nav class="tp-navbar">
+        <div class="tp-logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+            <i class="fas fa-layer-group"></i> NexGen
+        </div>
+        <div class="tp-auth-buttons">
+            <span style="margin-right: 10px; color: #555; font-size: 0.9rem;"></span>
+            <button class="btn-tp-outline" onclick="window.location.href='login.html'">Log in</button>
+        </div>
+    </nav>
+
+    <div class="auth-container fade-in-up">
+        <div class="tp-card">
+            
+            <div class="tp-card-header">
+                <i class="fas fa-user-plus"></i> Get Started
+            </div>
+
+            <form onsubmit="handleRegister(event)">
+                <div class="tp-input-group">
+                    <label>Username</label>
+                    <input type="text" id="r-user" required>
+                </div>
+                <div class="tp-input-group">
+                    <label>Email</label>
+                    <input type="email" id="r-email" required>
+                </div>
+                <div class="tp-input-group">
+                    <label>Mobile</label>
+                    <input type="tel" id="r-mobile" required>
+                </div>
+                <div class="tp-input-group">
+                    <label>Password</label>
+                    <input type="password" id="r-pass" required>
+                </div>
+                <button type="submit" class="btn-tp-solid w-100">Create Account</button>
+            </form>
+
+            <div class="tp-footer">
+                 <p> Already have an account?<a href="login.html">Log in</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="shape shape-1"></div>
+    <div class="shape shape-3"></div>
+
+    <script src="js/db.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

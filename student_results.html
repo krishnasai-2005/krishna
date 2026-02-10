@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NexGen - My Results</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body.dashboard-body { background-color: #f0fdf4; display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 260px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px; }
+        .brand-logo { font-size: 1.5rem; font-weight: 800; color: #00796b; display: flex; align-items: center; gap: 10px; margin-bottom: 40px; padding-left: 10px; }
+        .menu-list { list-style: none; }
+        .menu-list li { padding: 12px 15px; margin-bottom: 5px; color: #64748b; cursor: pointer; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 12px; transition: 0.2s; }
+        .menu-list li:hover, .menu-list li.active { background: #e0f2f1; color: #00796b; }
+        
+        .main-content { flex: 1; display: flex; flex-direction: column; background: #f8fafc; }
+        .top-header { background: white; padding: 15px 30px; display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; align-items: center; }
+        .content-scroll { padding: 30px; overflow-y: auto; height: calc(100vh - 70px); }
+
+        /* Results Table */
+        .results-container { background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .result-table { width: 100%; border-collapse: collapse; }
+        .result-table th { background: #f9fafb; padding: 15px; text-align: left; color: #6b7280; font-weight: 600; border-bottom: 1px solid #e2e8f0; }
+        .result-table td { padding: 15px; border-bottom: 1px solid #e2e8f0; color: #374151; }
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        .badge-pass { background: #dcfce7; color: #16a34a; }
+        .badge-fail { background: #fee2e2; color: #ef4444; }
+    </style>
+</head>
+<body class="dashboard-body">
+
+   <aside class="sidebar">
+        <div class="brand-logo"><i class="fas fa-layer-group"></i> NexGen</div>
+        <ul class="menu-list">
+            <li class="active" onclick="window.location.href='student_dashboard.html'"><i class="fas fa-home"></i> Dashboard</li>
+            <li onclick="window.location.href='student_results.html'"><i class="fas fa-chart-pie"></i> My Results</li>
+            <li onclick="window.location.href='student_profile.html'"><i class="fas fa-user"></i> My Profile</li>
+            <li onclick="logout()" style="margin-top: 50px; color: #ef4444;"><i class="fas fa-sign-out-alt"></i> Logout</li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div style="font-weight: bold; color: #475569; font-size: 1.1rem;">My Result</div>
+            <div class="user-profile-snippet" onclick="window.location.href='student_profile.html'" style="cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                <span id="nav-username" style="font-weight: 600; color: #334155;">Student</span>
+                <img id="nav-profile-pic" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            </div>
+        </header>
+        <div class="content-scroll">
+            <h2 style="margin-bottom: 20px; color: #00796b;">Exam History</h2>
+            
+            <div class="results-container">
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Date Taken</th>
+                            <th>Score</th>
+                            <th>Percentage</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/db.js"></script>
+    <script src="js/student.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            const tbody = document.getElementById('results-body');
+            
+            if(!user || !user.history || user.history.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:30px; color:#888;">No exams taken yet.</td></tr>';
+            } else {
+                user.history.forEach(h => {
+                    const status = h.score >= 40 ? 'Pass' : 'Fail';
+                    const badgeClass = h.score >= 40 ? 'badge-pass' : 'badge-fail';
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="font-weight:bold;">${h.subject}</td>
+                            <td>${h.date}</td>
+                            <td>${h.score} / 100</td>
+                            <td>${h.score}%</td>
+                            <td><span class="badge ${badgeClass}">${status}</span></td>
+                        </tr>
+                    `;
+                });
+            }
+        });
+    </script>
+</body>
+</html>
