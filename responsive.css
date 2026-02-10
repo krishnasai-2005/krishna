@@ -1,0 +1,9 @@
+@media (max-width: 768px) {
+    .split-screen { flex-direction: column; }
+    .content h1 { font-size: 2rem; }
+    .right-panel { padding: 40px 20px; }
+    .grid-container { grid-template-columns: 1fr; }
+    
+    /* Exam Overlay Mobile */
+    .exam-container { width: 95%; height: 90vh; }
+}
